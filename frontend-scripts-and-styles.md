@@ -8,6 +8,31 @@
 
 方式：在共用頭部插入一個 `<style type="text/css">` 區塊，貼上即可。
 
+#### 新生專區 (紫色主題)
+
+因新生專區對外資料呈現方式統一（使用內建表格輸出各資料簡短介紹），故無需由使用者自己在 GUI 設定樣式表類別，而是從共用頭部統一設定。
+
+```css
+
+:root {
+    --themePurple: #393d75;
+     --themePurpleLight: #4e5b99;
+    --themePurpleDark: #2f3369;
+}
+div.M23 div.mpgdetail a, div.module-rcglist div#pageptlist div.mdetail a,div.tab-content div.mouter table.listTB div.mdetail a{
+    text-decoration: underline;
+    color: var(--themePurple);
+}
+div.M23 div.mpgdetail a:hover,div.M23 div.mpgdetail a:focus, div.module-rcglist div#pageptlist div.mdetail a:hover, div.module-rcglist div#pageptlist div.mdetail a:focus,div.tab-content div.mouter table.listTB div.mdetail a:hover,div.tab-content div.mouter table.listTB div.mdetail a:focus{
+    text-decoration: none;
+    color: var(--themePurpleLight);
+}
+div.M23 div.mpgdetail a:visited, div.module-rcglist div#pageptlist div.mdetail a:visited ,div.tab-content div.mouter table.listTB div.mdetail a:visited{
+    text-decoration: none;
+    color: var(--themePurpleDark);
+}
+```
+
 #### 畢業生專區 (棕色主題)
 
 ```css
