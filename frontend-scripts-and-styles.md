@@ -59,6 +59,44 @@ a.ntpu-oaa:hover{
 }
 ```
 
+## 區塊式的資訊清單
+
+#### 畢業生專區 (棕色主題)
+
+設定位置：在各分類「編輯分類」->「詳細說明」底部插入一個 `<script>` 區塊後貼上。
+
+```js
+(function() {
+    // 建立一個 style 標籤
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    
+    // 定義針對標題連結的樣式
+    // .module-ptlist .mtitle a 鎖定該區塊內的標題連結
+    var css = `
+        .module-ptlist .mtitle a {
+            font-weight: bold !important;
+            color: #625144 !important;
+            text-decoration: none; 
+            font-size: larger;
+        }
+        .module-ptlist .mtitle a:hover {
+            text-decoration: underline !important; /* 滑鼠移過顯示底線 */
+            color: #625144; /* 保持顏色一致 */
+        }
+    `;
+
+    if (style.styleSheet) {
+        style.styleSheet.cssText = css;
+    } else {
+        style.appendChild(document.createTextNode(css));
+    }
+
+    // 將樣式表掛載到 head 中
+    document.getElementsByTagName('head')[0].appendChild(style);
+})();
+```
+
 ## 程式
 
 ### 插入頂部無障礙 key
