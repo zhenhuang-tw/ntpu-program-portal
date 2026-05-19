@@ -7,6 +7,23 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="dynamic-filter-container" style="margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fcfcfc;">
         <style>
             #dynamic-filter-container { font-family: sans-serif; }
+            /* 摺疊標題樣式 */
+            summary.filter-toggle {
+                cursor: pointer;
+                font-size: 1.1em;
+                font-weight: bold;
+                color: var(--ntpu-oaa-green-dark, #2F4A41);
+                outline: none;
+                user-select: none;
+                margin-bottom: 0;
+            }
+            /* 展開時為標題底部增加間距與分隔線 */
+            details[open] summary.filter-toggle {
+                margin-bottom: 15px;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 10px;
+            }
+            
             .filter-section { display: flex; flex-direction: column; gap: 15px; }
             .search-box { width: 100%; max-width: 300px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
             .checkbox-groups { display: flex; flex-direction: column; gap: 10px; }
@@ -27,33 +44,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         </style>
         
-        <div class="filter-section">
-            <input type="text" id="program-search" class="search-box" placeholder="請輸入學程名稱...">
+        <details>
+            <summary class="filter-toggle">依條件篩選</summary>
             
-            <div class="checkbox-groups">
-                <div class="check-group">
-                    <strong>學程類型：</strong>
-                    <label><input type="checkbox" value="單一領域微學程" checked> 單一領域微學程</label>
-                    <label><input type="checkbox" value="跨領域微學程" checked> 跨領域微學程</label>
-                    <label><input type="checkbox" value="學分學程" checked> 學分學程</label>
-                    <label><input type="checkbox" value="跨校學分學程" checked> 跨校學分學程</label>
-                </div>
-                <div class="check-group">
-                    <strong>授課語言：</strong>
-                    <label><input type="checkbox" value="中文授課" checked> 中文授課</label>
-                    <label><input type="checkbox" value="英文授課" checked> 英文授課</label>
-                </div>
-                <div class="check-group">
-                    <strong>學制：</strong>
-                    <label><input type="checkbox" value="學士" checked> 學士</label>
-                    <label><input type="checkbox" value="碩士" checked> 碩士</label>
+            <div class="filter-section">
+                <input type="text" id="program-search" class="search-box" placeholder="可輸入學程名稱來篩選...">
+                
+                <div class="checkbox-groups">
+                    <div class="check-group">
+                        <strong>學程類型：</strong>
+                        <label><input type="checkbox" value="單一領域微學程" checked> 單一領域微學程</label>
+                        <label><input type="checkbox" value="跨領域微學程" checked> 跨領域微學程</label>
+                        <label><input type="checkbox" value="學分學程" checked> 學分學程</label>
+                        <label><input type="checkbox" value="跨校學分學程" checked> 跨校學分學程</label>
+                    </div>
+                    <div class="check-group">
+                        <strong>授課語言：</strong>
+                        <label><input type="checkbox" value="中文授課" checked> 中文授課</label>
+                        <label><input type="checkbox" value="英文授課" checked> 英文授課</label>
+                    </div>
+                    <div class="check-group">
+                        <strong>學制：</strong>
+                        <label><input type="checkbox" value="學士" checked> 學士</label>
+                        <label><input type="checkbox" value="碩士" checked> 碩士</label>
+                    </div>
                 </div>
             </div>
-        </div>
+        </details>
     </div>
     `;
 
-    // 2. 結構化定位：直接尋找頁面中的大框架 .mpgdetail，不受說明文字改變的影響
+    // 2. 結構化定位
     const targetContainer = document.querySelector('.mpgdetail');
     if (targetContainer) {
         targetContainer.insertAdjacentHTML('beforeend', filterUI_HTML);
@@ -67,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('program-search');
     const checkboxes = document.querySelectorAll('#dynamic-filter-container input[type="checkbox"]');
 
-    // 4. 預先解析並快取各學程的標籤與名稱 (資料隱式綁定)
+    // 4. 解析資料
     programItems.forEach(item => {
         const titleEl = item.querySelector('.mtitle a');
         const descEl = item.querySelector('.mdetail .meditor');
@@ -92,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 5. 核心篩選邏輯
+    // 5. 篩選邏輯
     const executeFilter = () => {
         const keyword = searchInput.value.toLowerCase().trim();
         const activeTags = Array.from(checkboxes)
