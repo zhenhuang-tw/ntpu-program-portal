@@ -4,9 +4,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. 定義篩選區塊 UI 與內嵌樣式
     const filterUI_HTML = `
-    <div id="dynamic-filter-container" style="margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fcfcfc;">
+    <div id="dynamic-filter-container" style="margin: 20px 0; padding: 20px; border-radius: 8px; background-color: #DDE9E5;">
         <style>
             #dynamic-filter-container { font-family: sans-serif; }
+            
             /* 摺疊標題樣式 */
             summary.filter-toggle {
                 cursor: pointer;
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             /* 展開時為標題底部增加間距與分隔線 */
             details[open] summary.filter-toggle {
                 margin-bottom: 15px;
-                border-bottom: 1px solid #e0e0e0;
+                border-bottom: 1px solid #C4D6D0; 
                 padding-bottom: 10px;
             }
             
@@ -41,6 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
             .module-ptlist .mtitle a:hover {
                 text-decoration: underline !important;
                 color: var(--ntpu-oaa-green-dark);
+            }
+
+            /* Chip 標籤樣式 */
+            .program-chip {
+                display: inline-block;
+                background-color: #DDE9E5;
+                color: var(--ntpu-oaa-green-dark, #2F4A41);
+                font-size: 0.9em; 
+                border-radius: 12px;
+                padding: 2px 10px;
+                margin-left: 6px;
+                margin-bottom: 4px;
+                font-weight: normal;
+                white-space: nowrap;
             }
         </style>
         
@@ -88,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('program-search');
     const checkboxes = document.querySelectorAll('#dynamic-filter-container input[type="checkbox"]');
 
-    // 4. 解析資料
+    // 4. 解析資料並即時轉換 DOM 結構為 Chip
     programItems.forEach(item => {
         const titleEl = item.querySelector('.mtitle a');
         const descEl = item.querySelector('.mdetail .meditor');
@@ -99,16 +114,34 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (descEl) {
-            const text = descEl.textContent.trim();
-            const parts = text.split('。');
+            const fullText = descEl.textContent.trim();
+            const parts = fullText.split('。');
             
-            // 取最後一段（句號後方）解析 # 標籤
             if (parts.length > 1) {
-                const tagPart = parts[parts.length - 1];
-                const tags = tagPart.split(' ')
-                                    .filter(t => t.trim().startsWith('#'))
-                                    .map(t => t.trim().replace('#', ''));
+                // 將句號後的字串獨立出來處理
+                const tagPart = parts.pop(); 
+                // 將前半段描述重新組合並補回句號
+                const mainDesc = parts.join('。') + '。'; 
+                
+                const rawTags = tagPart.split(' ').filter(t => t.trim() !== '');
+                const tags = [];
+                const chipHTMLs = [];
+
+                rawTags.forEach(t => {
+                    if (t.startsWith('#')) {
+                        const cleanTag = t.replace('#', '').trim();
+                        tags.push(cleanTag);
+                        // 轉換為 span 並加入 aria-label 優化無障礙體驗
+                        chipHTMLs.push(`<span class="program-chip" aria-label="標籤：${cleanTag}">${cleanTag}</span>`);
+                    } else {
+                        chipHTMLs.push(t);
+                    }
+                });
+
                 item._filterData.tags = tags;
+                
+                // 將整理好的「文字敘述」與「Chip 標籤 HTML」重新寫入 DOM
+                descEl.innerHTML = mainDesc + chipHTMLs.join(' ');
             }
         }
     });
