@@ -49,14 +49,12 @@ a.grad-portal-link:hover{
 #### 學程拼圖 (綠色主題)
 
 ```css
-a.ntpu-oaa{
-  color: #554439;
-  text-decoration: underline;
+:root {
+ --ntpu-oaa-green-dark: #2F4A41;
+ --ntpu-oaa-green-light: #37564C;
 }
-a.ntpu-oaa:hover{
-  color: #554439;
-  text-decoration: none;
-}
+a.ntpu-oaa{ color: var(--ntpu-oaa-green-dark); text-decoration: underline; }
+a.ntpu-oaa:hover{ color: var(--ntpu-oaa-green-light); text-decoration: none; }
 ```
 
 ## 區塊式的資訊清單
