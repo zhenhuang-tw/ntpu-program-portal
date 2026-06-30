@@ -57,12 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 font-weight: normal;
                 white-space: nowrap;
             }
-
-            /* 避免篩選隱藏 item 後因 float + 高度不一致而留下大小不等的空隙 */
-            .listBS {
-                display: flex;
-                flex-wrap: wrap;
-            }
         </style>
 
         <details>
@@ -189,11 +183,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // 根據兩者交集結果進行顯示或隱藏
+      // 找到最外層的 .listBS 包裝容器（每個學程獨佔一個 .row.listBS.boxSD）
+      const rowWrapper = item.closest(".listBS") || item;
+
+      // 隱藏整列包裝器，連同其 margin 一起消除，避免留白
       if (matchKeyword && matchTags) {
-        item.style.display = "";
+        rowWrapper.style.display = "";
       } else {
-        item.style.display = "none";
+        rowWrapper.style.display = "none";
       }
     });
   };
