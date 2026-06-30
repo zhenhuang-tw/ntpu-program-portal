@@ -1,6 +1,48 @@
 /**
  * 學程拼圖 - 學程分類頁(七大領域)動態篩選器
  */
+
+// ── 篩選器設定（修改此處即可增減篩選分組與選項）──
+const FILTER_CONFIG = [
+  {
+    group: "學程類型",
+    options: [
+      { value: "單一領域微學程", label: "單一領域微學程" },
+      { value: "跨領域微學程", label: "跨領域微學程" },
+      { value: "學分學程", label: "學分學程" },
+      { value: "跨校學分學程", label: "跨校學分學程" },
+    ],
+  },
+  {
+    group: "授課語言",
+    options: [
+      { value: "中文授課", label: "中文授課" },
+      { value: "英文授課", label: "英文授課" },
+    ],
+  },
+  {
+    group: "學制",
+    options: [
+      { value: "學士", label: "學士" },
+      { value: "碩士", label: "碩士" },
+    ],
+  },
+];
+
+// 從設定產生核取方塊 HTML
+const checkGroupsHTML = FILTER_CONFIG.map(
+  ({ group, options }) =>
+    `<div class="check-group">
+      <strong>${group}：</strong>
+      ${options
+        .map(
+          ({ value, label }) =>
+            `<label><input type="checkbox" value="${value}" checked> ${label}</label>`,
+        )
+        .join("\n")}
+    </div>`,
+).join("\n");
+
 document.addEventListener("DOMContentLoaded", () => {
   // 1. 定義篩選區塊 UI 與內嵌樣式
   const filterUI_HTML = `
@@ -66,23 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <input type="text" id="program-search" class="search-box" placeholder="可輸入學程名稱來篩選...">
 
                 <div class="checkbox-groups">
-                    <div class="check-group">
-                        <strong>學程類型：</strong>
-                        <label><input type="checkbox" value="單一領域微學程" checked> 單一領域微學程</label>
-                        <label><input type="checkbox" value="跨領域微學程" checked> 跨領域微學程</label>
-                        <label><input type="checkbox" value="學分學程" checked> 學分學程</label>
-                        <label><input type="checkbox" value="跨校學分學程" checked> 跨校學分學程</label>
-                    </div>
-                    <div class="check-group">
-                        <strong>授課語言：</strong>
-                        <label><input type="checkbox" value="中文授課" checked> 中文授課</label>
-                        <label><input type="checkbox" value="英文授課" checked> 英文授課</label>
-                    </div>
-                    <div class="check-group">
-                        <strong>學制：</strong>
-                        <label><input type="checkbox" value="學士" checked> 學士</label>
-                        <label><input type="checkbox" value="碩士" checked> 碩士</label>
-                    </div>
+                    ${checkGroupsHTML}
                 </div>
             </div>
         </details>
