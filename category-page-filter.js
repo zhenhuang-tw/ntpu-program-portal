@@ -57,6 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 font-weight: normal;
                 white-space: nowrap;
             }
+
+            /* 避免篩選隱藏 item 後因 float + 高度不一致而留下大小不等的空隙 */
+            .listBS {
+                display: flex;
+                flex-wrap: wrap;
+            }
         </style>
 
         <details>
