@@ -1,9 +1,9 @@
 /**
  * 學程拼圖 - 學程分類頁(七大領域)動態篩選器
  */
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. 定義篩選區塊 UI 與內嵌樣式
-    const filterUI_HTML = `
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. 定義篩選區塊 UI 與內嵌樣式
+  const filterUI_HTML = `
     <div id="dynamic-filter-container" style="margin: 20px 0; padding: 20px; border-radius: 8px; background-color: #DDE9E5;">
         <style>
             #dynamic-filter-container { font-family: sans-serif; }
@@ -89,107 +89,114 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     `;
 
-    // 2. 結構化定位
-    const targetContainer = document.querySelector('.mpgdetail');
-    if (targetContainer) {
-        targetContainer.insertAdjacentHTML('beforeend', filterUI_HTML);
-    } else {
-        console.warn('未找到 .mpgdetail 區塊，無法插入篩選器。');
-        return;
-    }
+  // 2. 結構化定位
+  const targetContainer = document.querySelector(".mpgdetail");
+  if (targetContainer) {
+    targetContainer.insertAdjacentHTML("beforeend", filterUI_HTML);
+  } else {
+    console.warn("未找到 .mpgdetail 區塊，無法插入篩選器。");
+    return;
+  }
 
-    // 3. 取得控制元件
-    const programItems = document.querySelectorAll('.listBS .d-item');
-    const searchInput = document.getElementById('program-search');
-    const checkboxes = document.querySelectorAll('#dynamic-filter-container input[type="checkbox"]');
+  // 3. 取得控制元件
+  const programItems = document.querySelectorAll(".listBS .d-item");
+  const searchInput = document.getElementById("program-search");
+  const checkboxes = document.querySelectorAll(
+    '#dynamic-filter-container input[type="checkbox"]',
+  );
 
-    // 4. 解析資料並即時轉換 DOM 結構為 Chip
-    programItems.forEach(item => {
-        const titleEl = item.querySelector('.mtitle a');
-        const descEl = item.querySelector('.mdetail .meditor');
+  // 4. 解析資料並即時轉換 DOM 結構為 Chip
+  programItems.forEach((item) => {
+    const titleEl = item.querySelector(".mtitle a");
+    const descEl = item.querySelector(".mdetail .meditor");
 
-        item._filterData = {
-            title: titleEl ? titleEl.textContent.trim() : '',
-            tags: []
-        };
-
-        if (descEl) {
-            const fullText = descEl.textContent.trim();
-            const parts = fullText.split('。');
-
-            if (parts.length > 1) {
-                // 將句號後的字串獨立出來處理
-                const tagPart = parts.pop();
-                // 將前半段描述重新組合並補回句號
-                const mainDesc = parts.join('。') + '。';
-
-                // 將正文中以【】包裹的字串轉換為紅色粗體樣式
-                const styledMainDesc = mainDesc.replace(
-                    /【([^】]*)】/g,
-                    '<span style="color:#e74c3c; font-weight: bold;">【$1】</span>'
-                );
-
-                const rawTags = tagPart.split(' ').filter(t => t.trim() !== '');
-                const tags = [];
-                const chipHTMLs = [];
-
-                rawTags.forEach(t => {
-                    if (t.startsWith('#')) {
-                        const cleanTag = t.replace('#', '').trim();
-                        tags.push(cleanTag);
-                        // 轉換為 span 並加入 aria-label ，提升無障礙體驗
-                        chipHTMLs.push(`<span class="program-chip" aria-label="標籤：${cleanTag}">${cleanTag}</span>`);
-                    } else {
-                        chipHTMLs.push(t);
-                    }
-                });
-
-                item._filterData.tags = tags;
-
-                // 將整理好的「文字敘述」與「Chip 標籤 HTML」重新寫入 DOM
-                descEl.innerHTML = styledMainDesc + chipHTMLs.join(' ');
-            }
-        }
-    });
-
-    // 5. 篩選邏輯
-    const executeFilter = () => {
-        const keyword = searchInput.value.toLowerCase().trim();
-        const activeTags = Array.from(checkboxes)
-                                .filter(cb => cb.checked)
-                                .map(cb => cb.value);
-
-        programItems.forEach(item => {
-            const { title, tags } = item._filterData;
-
-            // 條件 A：關鍵字搜尋
-            const matchKeyword = keyword === '' || title.toLowerCase().includes(keyword);
-
-            // 條件 B：核取方塊標籤篩選
-            let matchTags = true;
-            for (let tag of tags) {
-                const tagCheckboxExists = Array.from(checkboxes).some(cb => cb.value === tag);
-                // 如果學程擁有該標籤，但對應的核取方塊被取消勾選，則隱藏
-                if (tagCheckboxExists && !activeTags.includes(tag)) {
-                    matchTags = false;
-                    break;
-                }
-            }
-
-            // 根據兩者交集結果進行顯示或隱藏
-            if (matchKeyword && matchTags) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        });
+    item._filterData = {
+      title: titleEl ? titleEl.textContent.trim() : "",
+      tags: [],
     };
 
-    // 6. 綁定事件監聽
-    if (searchInput) {
-        searchInput.addEventListener('input', executeFilter);
+    if (descEl) {
+      const fullText = descEl.textContent.trim();
+      const parts = fullText.split("。");
+
+      if (parts.length > 1) {
+        // 將句號後的字串獨立出來處理
+        const tagPart = parts.pop();
+        // 將前半段描述重新組合並補回句號
+        const mainDesc = parts.join("。") + "。";
+
+        // 將正文中以【】包裹的字串轉換為紅色粗體樣式
+        const styledMainDesc = mainDesc.replace(
+          /【([^】]*)】/g,
+          '<span style="color:#e74c3c; font-weight: bold;">【$1】</span>',
+        );
+
+        const rawTags = tagPart.split(" ").filter((t) => t.trim() !== "");
+        const tags = [];
+        const chipHTMLs = [];
+
+        rawTags.forEach((t) => {
+          if (t.startsWith("#")) {
+            const cleanTag = t.replace("#", "").trim();
+            tags.push(cleanTag);
+            // 轉換為 span 並加入 aria-label ，提升無障礙體驗
+            chipHTMLs.push(
+              `<span class="program-chip" aria-label="標籤：${cleanTag}">${cleanTag}</span>`,
+            );
+          } else {
+            chipHTMLs.push(t);
+          }
+        });
+
+        item._filterData.tags = tags;
+
+        // 將整理好的「文字敘述」與「Chip 標籤 HTML」重新寫入 DOM
+        descEl.innerHTML = styledMainDesc + chipHTMLs.join(" ");
+      }
     }
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', executeFilter);
+  });
+
+  // 5. 篩選邏輯
+  const executeFilter = () => {
+    const keyword = searchInput.value.toLowerCase().trim();
+    const activeTags = Array.from(checkboxes)
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value);
+
+    programItems.forEach((item) => {
+      const { title, tags } = item._filterData;
+
+      // 條件 A：關鍵字搜尋
+      const matchKeyword =
+        keyword === "" || title.toLowerCase().includes(keyword);
+
+      // 條件 B：核取方塊標籤篩選
+      let matchTags = true;
+      for (let tag of tags) {
+        const tagCheckboxExists = Array.from(checkboxes).some(
+          (cb) => cb.value === tag,
+        );
+        // 如果學程擁有該標籤，但對應的核取方塊被取消勾選，則隱藏
+        if (tagCheckboxExists && !activeTags.includes(tag)) {
+          matchTags = false;
+          break;
+        }
+      }
+
+      // 根據兩者交集結果進行顯示或隱藏
+      if (matchKeyword && matchTags) {
+        item.style.display = "";
+      } else {
+        item.style.display = "none";
+      }
     });
+  };
+
+  // 6. 綁定事件監聽
+  if (searchInput) {
+    searchInput.addEventListener("input", executeFilter);
+  }
+  checkboxes.forEach((cb) => {
+    cb.addEventListener("change", executeFilter);
+  });
 });
