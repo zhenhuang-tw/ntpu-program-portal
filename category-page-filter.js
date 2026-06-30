@@ -1,3 +1,4 @@
+<script>
 /**
  * 學程拼圖 - 學程分類頁(七大領域)動態篩選器
  */
@@ -7,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="dynamic-filter-container" style="margin: 20px 0; padding: 20px; border-radius: 8px; background-color: #DDE9E5;">
         <style>
             #dynamic-filter-container { font-family: sans-serif; }
-            
+
             /* 摺疊標題樣式 */
             summary.filter-toggle {
                 cursor: pointer;
@@ -21,22 +22,22 @@ document.addEventListener('DOMContentLoaded', () => {
             /* 展開時為標題底部增加間距與分隔線 */
             details[open] summary.filter-toggle {
                 margin-bottom: 15px;
-                border-bottom: 1px solid #C4D6D0; 
+                border-bottom: 1px solid #C4D6D0;
                 padding-bottom: 10px;
             }
-            
+
             .filter-section { display: flex; flex-direction: column; gap: 15px; }
             .search-box { width: 100%; max-width: 300px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
             .checkbox-groups { display: flex; flex-direction: column; gap: 10px; }
             .check-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
             .check-group strong { color: var(--ntpu-oaa-green-dark, #2F4A41); min-width: 80px; }
             .check-group label { cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: normal; margin: 0; }
-            
+
             /* 順便處理各資訊之標題樣式， --ntpu-oaa-green-dark 另於全站頭部賦值 */
             .module-ptlist .mtitle a {
                 font-weight: bold !important;
-                color: var(--ntpu-oaa-green-dark) !important; 
-                text-decoration: none; 
+                color: var(--ntpu-oaa-green-dark) !important;
+                text-decoration: none;
                 font-size: larger;
             }
             .module-ptlist .mtitle a:hover {
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 display: inline-block;
                 background-color: #DDE9E5;
                 color: var(--ntpu-oaa-green-dark, #2F4A41);
-                font-size: 0.9em; 
+                font-size: 0.9em;
                 border-radius: 12px;
                 padding: 2px 10px;
                 margin-left: 6px;
@@ -58,13 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 white-space: nowrap;
             }
         </style>
-        
+
         <details>
             <summary class="filter-toggle">依條件篩選</summary>
-            
+
             <div class="filter-section">
                 <input type="text" id="program-search" class="search-box" placeholder="可輸入學程名稱來篩選...">
-                
+
                 <div class="checkbox-groups">
                     <div class="check-group">
                         <strong>學程類型：</strong>
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     programItems.forEach(item => {
         const titleEl = item.querySelector('.mtitle a');
         const descEl = item.querySelector('.mdetail .meditor');
-        
+
         item._filterData = {
             title: titleEl ? titleEl.textContent.trim() : '',
             tags: []
@@ -116,13 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (descEl) {
             const fullText = descEl.textContent.trim();
             const parts = fullText.split('。');
-            
+
             if (parts.length > 1) {
                 // 將句號後的字串獨立出來處理
-                const tagPart = parts.pop(); 
+                const tagPart = parts.pop();
                 // 將前半段描述重新組合並補回句號
-                const mainDesc = parts.join('。') + '。'; 
-                
+                const mainDesc = parts.join('。') + '。';
+
+                // 將正文中以【】包裹的字串轉換為紅色粗體樣式
+                const styledMainDesc = mainDesc.replace(
+                    /【([^】]*)】/g,
+                    '<span style="color:#e74c3c; font-weight: bold;">【$1】</span>'
+                );
+
                 const rawTags = tagPart.split(' ').filter(t => t.trim() !== '');
                 const tags = [];
                 const chipHTMLs = [];
@@ -131,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (t.startsWith('#')) {
                         const cleanTag = t.replace('#', '').trim();
                         tags.push(cleanTag);
-                        // 轉換為 span 並加入 aria-label 優化無障礙體驗
+                        // 轉換為 span 並加入 aria-label ，提升無障礙體驗
                         chipHTMLs.push(`<span class="program-chip" aria-label="標籤：${cleanTag}">${cleanTag}</span>`);
                     } else {
                         chipHTMLs.push(t);
@@ -139,9 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 item._filterData.tags = tags;
-                
+
                 // 將整理好的「文字敘述」與「Chip 標籤 HTML」重新寫入 DOM
-                descEl.innerHTML = mainDesc + chipHTMLs.join(' ');
+                descEl.innerHTML = styledMainDesc + chipHTMLs.join(' ');
             }
         }
     });
@@ -187,3 +194,4 @@ document.addEventListener('DOMContentLoaded', () => {
         cb.addEventListener('change', executeFilter);
     });
 });
+</script>
