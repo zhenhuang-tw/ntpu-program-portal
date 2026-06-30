@@ -1,4 +1,3 @@
-<script>
 /**
  * 學程拼圖 - 學程分類頁(七大領域)動態篩選器
  */
@@ -194,4 +193,3 @@ document.addEventListener('DOMContentLoaded', () => {
         cb.addEventListener('change', executeFilter);
     });
 });
-</script>
